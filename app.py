@@ -1,30 +1,43 @@
+
 import streamlit as st
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
-# 1. రియల్ హాస్పిటల్ డేటాని చదవడం (Pandas మ్యాజిక్)
+# 1. రియల్ హాస్పిటల్ డేటాని చదవడం
 @st.cache_data
 def load_data():
-    # ఇది అమెరికాలోని క్లీవ్‌ల్యాండ్ హాస్పిటల్ వాళ్ళ రియల్ డేటాసెట్ లింక్
     url = "https://raw.githubusercontent.com/kb22/Heart-Disease-Prediction/master/dataset.csv"
     df = pd.read_csv(url)
     return df
 
 df = load_data()
 
-# 2. డాక్టర్లు వాడే 4 ముఖ్యమైన వివరాలను మాత్రమే తీసుకుంటున్నాం
-# (age: వయసు, trestbps: బీపీ, chol: కొలెస్ట్రాల్, thalach: గుండె వేగం)
+# 2. కేవలం 4 వివరాలు మాత్రమే తీసుకుంటున్నాం
 X = df[['age', 'trestbps', 'chol', 'thalach']]
-y = df['target'] # 1 అంటే జబ్బు ఉన్నట్టు, 0 అంటే లేనట్టు
+y = df['target']
 
-# 3. AI మోడల్ కి నిజమైన డేటాతో ట్రైనింగ్ ఇవ్వడం
+# 3. డేటాని విడగొట్టడం (80% చదువుకోవడానికి, 20% ఎగ్జామ్ కి)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 4. AI మోడల్ కి ట్రైనింగ్ ఇవ్వడం (చదివించడం)
 model = RandomForestClassifier(random_state=42)
-model.fit(X, y)
+model.fit(X_train, y_train)
+
+# 5. AI కి ఎగ్జామ్ పెట్టడం & స్కోర్ కనిపెట్టడం
+predictions = model.predict(X_test)
+score = accuracy_score(y_test, predictions)
+accuracy_percentage = round(score * 100, 2)
 
 # వెబ్‌సైట్ డిజైన్ సెట్టింగ్స్
 st.set_page_config(page_title="Real Medical AI", page_icon="🩺", layout="centered")
 
 st.title("🩺 రియల్ హార్ట్ డిసీజ్ AI డాక్టర్")
+
+# 📊 మన AI స్కోర్ ని వెబ్‌సైట్ లో చూపించడం
+st.info(f"📊 **మన AI డాక్టర్ ఎగ్జామ్ స్కోర్ (Accuracy): {accuracy_percentage}%**")
+
 st.write("---")
 st.write("### **కింద ఉన్న మీ వివరాలను ఎంటర్ చేసి, గుండె ఆరోగ్యాన్ని చెక్ చేసుకోండి:**")
 
@@ -38,7 +51,6 @@ st.write("---")
 
 # బటన్ అండ్ ప్రిడిక్షన్
 if st.button("🔍 నా హెల్త్ రిపోర్ట్ ఇవ్వు", use_container_width=True):
-    # యూజర్ ఇచ్చిన డేటాని పాండాస్ (Pandas) ఫార్మాట్ లోకి మార్చడం
     user_data = pd.DataFrame([[age, bp, chol, hr]], columns=['age', 'trestbps', 'chol', 'thalach'])
     prediction = model.predict(user_data)
     
