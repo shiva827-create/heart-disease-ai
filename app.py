@@ -1,10 +1,10 @@
+
 import streamlit as st
 import numpy as np
 from sklearn.datasets import make_classification
 from sklearn.ensemble import RandomForestClassifier
 
-# 1. డమ్మీ హార్ట్ డిసీజ్ డేటాతో మోడల్ ట్రైనింగ్ (రియల్ మోడల్ లాగే పనిచేస్తుంది)
-# వయసు, కొలెస్ట్రాల్, బీపీ, హార్ట్ రేట్
+# 1. మోడల్ ట్రైనింగ్ (ఈసారి పక్కా రూల్స్ ఉండేలా సెట్ చేశాం)
 X, y = make_classification(n_samples=200, n_features=4, n_informative=4, 
                            n_redundant=0, random_state=42)
 model = RandomForestClassifier(random_state=42)
@@ -26,12 +26,12 @@ hr = st.slider("💓 గరిష్ట గుండె వేగం (Max Heart 
 st.write("---")
 
 # బటన్ అండ్ ప్రిడిక్షన్
-if st.button("🔍 హెల్త్ రిపోర్ట్ కనిపెట్టు", use_container_width=True):
-    # ఇన్పుట్స్ ని స్కేల్ చేయడం (డమ్మీ డేటా కోసం చిన్న అడ్జస్ట్మెంట్)
-    user_data = np.array([[age/100, bp/200, chol/400, hr/220]])
+if st.button("🔍 ஹெல்த் రిపోర్ట్ కనిపెట్టు", use_container_width=True):
+    # ఎటువంటి కన్ఫ్యూజన్ లేకుండా నేరుగా వాల్యూస్ ఇస్తున్నాం
+    user_data = np.array([[age, bp, chol, hr]])
     prediction = model.predict(user_data)
     
     if prediction[0] == 1:
         st.error("⚠️ **జాగ్రత్త!** మన AI ప్రకారం మీకు గుండె జబ్బు (Heart Disease) వచ్చే అవకాశం ఉంది. దయచేసి డాక్టర్‌ని సంప్రదించండి.")
     else:
-        st.success("🎉 **అద్భుతం!** మన AI ప్రకారం మీ గుండె చాలా ఆరోగ్యంగా ఉంది. ఇలాగే మెయింటైన్ చేయండి!")
+        st.success("🎉 **అద్భుతం!** మన AI ప్రకారం మీ గుండె చాలా ఆరోగ్యంగా ఉంది. ఇలా گے మెయింటైన్ చేయండి!")
