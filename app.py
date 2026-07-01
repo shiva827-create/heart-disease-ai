@@ -3,7 +3,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-
+df = pd.read_csv("heart.csv.csv")
 # 1. గిట్‌హబ్ నుండి నిజమైన పేషెంట్ల డేటాని లోడ్ చేస్తున్నాం
 @st.cache_data
 def load_real_data():
